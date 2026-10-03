@@ -4,7 +4,8 @@
 **Roll Number:** CCE25CS202  
 **Department:** Computer Science & Engineering (2nd Year)  
 **Institution:** Christ College of Engineering (Autonomous), Irinjalakuda, Thrissur, Kerala  
-**Live Deployment URL:** [https://pa-aiswarya-portfolio.surge.sh](https://pa-aiswarya-portfolio.surge.sh)
+**GitHub Pages URL:** [https://p-a-aiswarya.github.io/p.a.aiswarya-CS202/](https://p-a-aiswarya.github.io/p.a.aiswarya-CS202/)
+**Live Deployment URL (Surge):** [https://pa-aiswarya-portfolio.surge.sh](https://pa-aiswarya-portfolio.surge.sh)
 
 ---
 

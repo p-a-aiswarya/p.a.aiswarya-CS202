@@ -60,13 +60,11 @@ export default function Contact() {
         break;
 
       case "phone":
-        if (!trimmed) {
-          error = "Phone number is required.";
-        } else {
+        if (trimmed) {
           // Normalize digits
           const digitsOnly = trimmed.replace(/\D/g, "");
           if (digitsOnly.length < 10) {
-            error = "Please enter a valid phone number (minimum 10 digits).";
+            error = "Please enter a valid phone number (minimum 10 digits) or leave blank.";
           }
         }
         break;
@@ -144,49 +142,69 @@ export default function Contact() {
     try {
       // Dispatch to FormSubmit endpoint
       const payload = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone || "Not provided",
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || "Not provided",
         _subject: `Portfolio Message from ${formData.name}: ${formData.subject}`,
-        subject: formData.subject,
-        message: formData.message,
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
         _template: "table",
         _captcha: "false"
       };
 
-      try {
-        await fetch(`https://formsubmit.co/ajax/${personalInfo.email}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-      } catch {
-        // Fallback continues gracefully so user is never blocked
+      const response = await fetch(`https://formsubmit.co/ajax/${personalInfo.email}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      // Check if FormSubmit requires 1-time activation
+      const isActivationNeeded =
+        (data.success === "false" || data.success === false) &&
+        typeof data.message === "string" &&
+        data.message.toLowerCase().includes("activation");
+
+      if (isActivationNeeded) {
+        setSubmitStatus("activation_needed");
+        setFeedbackMessage(
+          `FormSubmit requires a 1-time email confirmation! An activation email has been sent to ${personalInfo.email}. Please open your inbox (or Spam folder) and click the "Activate Form" button. In the meantime, you can forward this message instantly via WhatsApp or Email below.`
+        );
+        setLastSubmission({ ...formData, timestamp: new Date().toLocaleTimeString() });
+        return;
       }
 
-      // Trigger Confetti celebration
-      try {
-        confetti({
-          particleCount: 90,
-          spread: 75,
-          origin: { y: 0.6 }
-        });
-      } catch {
-        // Safe fallback if canvas is not supported
-      }
+      if (response.ok && (data.success === "true" || data.success === true || data.success === undefined)) {
+        // Trigger Confetti celebration
+        try {
+          confetti({
+            particleCount: 90,
+            spread: 75,
+            origin: { y: 0.6 }
+          });
+        } catch {
+          // Safe fallback if canvas is not supported
+        }
 
-      setSubmitStatus("success");
-      setFeedbackMessage("Thank you! Your message has been sent successfully.");
-      setLastSubmission({ ...formData, timestamp: new Date().toLocaleTimeString() });
-      setFormData(initialFormState);
-      setTouched({});
-      setErrors({});
-    } catch {
+        setSubmitStatus("success");
+        setFeedbackMessage("Thank you! Your message has been sent successfully.");
+        setLastSubmission({ ...formData, timestamp: new Date().toLocaleTimeString() });
+        setFormData(initialFormState);
+        setTouched({});
+        setErrors({});
+      } else {
+        throw new Error(data.message || "Failed to submit enquiry.");
+      }
+    } catch (err) {
       setSubmitStatus("error");
-      setFeedbackMessage("Failed to submit enquiry. Please try sending via WhatsApp or Email directly.");
+      setFeedbackMessage(
+        err.message || "Failed to dispatch enquiry online. You can send this message directly via WhatsApp or Email using the options below."
+      );
+      setLastSubmission({ ...formData, timestamp: new Date().toLocaleTimeString() });
     }
   };
 
@@ -390,16 +408,41 @@ export default function Contact() {
                     <span>{feedbackMessage}</span>
                   </div>
                 )}
+                {submitStatus === "activation_needed" && feedbackMessage && (
+                  <div className="alert-banner alert-warning" role="alert">
+                    <AlertCircle size={18} />
+                    <span>{feedbackMessage}</span>
+                  </div>
+                )}
 
-                {/* Success Card view if submitted successfully */}
-                {submitStatus === "success" && lastSubmission ? (
+                {/* Success Card view if submitted successfully or activation needed */}
+                {(submitStatus === "success" || submitStatus === "activation_needed") && lastSubmission ? (
                   <div className="submission-success-view">
-                    <div className="success-icon-wrap">
-                      <CheckCircle2 size={48} className="text-success" />
+                    <div
+                      className="success-icon-wrap"
+                      style={submitStatus === "activation_needed" ? { background: "rgba(245, 158, 11, 0.15)", color: "#f59e0b" } : undefined}
+                    >
+                      {submitStatus === "activation_needed" ? (
+                        <AlertCircle size={48} style={{ color: "#f59e0b" }} />
+                      ) : (
+                        <CheckCircle2 size={48} className="text-success" />
+                      )}
                     </div>
-                    <h3 className="success-title">Message Registered Successfully!</h3>
+                    <h3 className="success-title">
+                      {submitStatus === "activation_needed"
+                        ? "Action Required: 1-Time Email Activation"
+                        : "Message Registered Successfully!"}
+                    </h3>
                     <p className="success-desc">
-                      Thank you, <strong>{lastSubmission.name}</strong>. Your enquiry regarding "<em>{lastSubmission.subject}</em>" has been captured.
+                      {submitStatus === "activation_needed" ? (
+                        <>
+                          FormSubmit requires a one-time activation. An email was sent to <strong>{personalInfo.email}</strong>. Please click the <strong>"Activate Form"</strong> link in your Gmail so future submissions land directly in your inbox.
+                        </>
+                      ) : (
+                        <>
+                          Thank you, <strong>{lastSubmission.name}</strong>. Your enquiry regarding "<em>{lastSubmission.subject}</em>" has been captured.
+                        </>
+                      )}
                     </p>
 
                     <div className="submission-summary-box">
@@ -419,7 +462,7 @@ export default function Contact() {
 
                     <div className="dispatch-action-box">
                       <p className="dispatch-action-title">
-                        <Sparkles size={16} className="text-accent" /> Direct Forwarding Options:
+                        <Sparkles size={16} className="text-accent" /> Direct Forwarding Options (Message Pre-Filled):
                       </p>
                       <div className="dispatch-buttons">
                         <a
@@ -492,14 +535,15 @@ export default function Contact() {
                         name="phone"
                         type="tel"
                         label="Phone / WhatsApp Number"
-                        placeholder="e.g. +91 9876543210"
+                        placeholder="e.g. +91 9876543210 (Optional)"
                         value={formData.phone}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         error={errors.phone}
                         touched={touched.phone}
-                        required={true}
+                        required={false}
                         icon={PhoneCall}
+                        helperText="Optional"
                       />
                     </div>
 

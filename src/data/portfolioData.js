@@ -6,7 +6,7 @@ export const personalInfo = {
   phone: "+91 6282415966",
   phoneRaw: "916282415966",
   email: "aiswaryaajay2008@gmail.com",
-  profileImage: "/images/profile.jpg",
+  profileImage: "./images/profile.jpg",
   location: "Christ College of Engineering (Autonomous), Irinjalakuda, Thrissur, Kerala",
   socials: {
     github: {
@@ -180,7 +180,7 @@ export const certificatesList = [
     date: "October 18–19, 2025",
     certificateId: "IEDC-CCE-EVOLV2.0",
     signatories: "Dr. Sijo M T (Principal) & Aswathy P Sajeev (Nodal Officer, IEDC CCE)",
-    image: "/images/certificates/cert_evolv_bootcamp.jpg",
+    image: "./images/certificates/cert_evolv_bootcamp.jpg",
     details: "Certificate of Appreciation for active participation in EVOLV 2.0 residential bootcamp focused on pitching, tech entrepreneurship, and innovation."
   },
   {
@@ -191,7 +191,7 @@ export const certificatesList = [
     date: "September 15, 2026",
     certificateId: "RSET-TK26-ADAPT",
     signatories: "Faculty Coordinator & Principal, RSET",
-    image: "/images/certificates/cert_adaptathon_rajagiri.jpg",
+    image: "./images/certificates/cert_adaptathon_rajagiri.jpg",
     details: "Certificate of Appreciation for participating and competing in the event ADAPTATHON as part of 'Techkshetra 2026', an Inter-College Level Tech Fest."
   },
   {
@@ -202,7 +202,7 @@ export const certificatesList = [
     date: "February 4–6, 2026",
     certificateId: "CCE-TECHLETICS-SW4",
     signatories: "Fr. John Paliakara CMI (Executive Director), Dr. Sijo M T (Principal), Mr. Hingston Xavier (Techfest Coordinator)",
-    image: "/images/certificates/cert_smartwatch_techletics.jpg",
+    image: "./images/certificates/cert_smartwatch_techletics.jpg",
     details: "Certificate of Appreciation for enthusiastic participation in the Smart Watch Workshop during TECHLETICS 4.0, recognizing technical proficiency and creative excellence."
   },
   {
@@ -213,7 +213,7 @@ export const certificatesList = [
     date: "June 23, 2026",
     certificateId: "RTX-JUN26-165",
     signatories: "Dinsha (CEO Retechnox) & Reena P (Program Manager)",
-    image: "/images/certificates/cert_internship_retechnox.jpg",
+    image: "./images/certificates/cert_internship_retechnox.jpg",
     details: "Successfully completed a 1-week industrial internship in the field of FULL STACK DEVELOPMENT organized by Retechnox Technologies LLP."
   },
   {
@@ -224,7 +224,7 @@ export const certificatesList = [
     date: "November 25, 2025",
     certificateId: "2025-IV-10101",
     signatories: "Joseph Job (Authorized Signatory)",
-    image: "/images/certificates/cert_spectrum_industrial_visit.jpg",
+    image: "./images/certificates/cert_spectrum_industrial_visit.jpg",
     details: "Official certificate confirming curriculum-based industrial visit study of Kerala's first private-sector IT park, corporate software infrastructure, and IT park workflows."
   }
 ];

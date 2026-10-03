@@ -2488,6 +2488,12 @@ ul {
   color: #ff8097;
 }
 
+.alert-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fcd34d;
+}
+
 .quick-wa-row {
   display: flex;
   align-items: center;
